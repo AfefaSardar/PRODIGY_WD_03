@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<style>
+  body {
+    font-family:Arial, Helvetica, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background: url('tictactoe.png') center/cover;
+  }
+
+  .button {
+    padding: 20px 30px;
+    font-size: 1.5em;
+    background-color: #0aaa2d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .button:hover {
+    background-color: #555;
+  }
+
+  .board {
+    display: none;
+    grid-template: repeat(3, 150px) / repeat(3, 150px);
+    gap: 4px;
+    background-color: #030000;
+    border: 4px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(10, 10, 10, 0.1);
+    position: relative;
+  }
+
+  .cell {
+    background-color: #ddd;
+    border: 2px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5em;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .cell:hover {
+    background-color: #888181;
+  }
+
+  .winner { background-color: #030b00e0 !important; }
+  .tie { background-color: #4bf303 !important; }
+
+  .message {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5em; color: #3fb508;
+    display: none;
+  }
+
+  h1 { text-align: center; margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<h1>Tic Tac Toe</h1>
+
+<button class="button" onclick="startGame()">Start Game</button>
+
+<div class="board" onclick="cellClicked(event)">
+  <div class="message">Congratulations!</div>
+  <div class="cell" data-index="0"></div>
+  <div class="cell" data-index="1"></div>
+  <div class="cell" data-index="2"></div>
+  <div class="cell" data-index="3"></div>
+  <div class="cell" data-index="4"></div>
+  <div class="cell" data-index="5"></div>
+  <div class="cell" data-index="6"></div>
+  <div class="cell" data-index="7"></div>
+  <div class="cell" data-index="8"></div>
+</div>
+
+<script>
+  const button = document.querySelector('.button');
+  const board = document.querySelector('.board');
+  const cells = document.querySelectorAll('.cell');
+  const message = document.querySelector('.message');
+  let currentPlayer = 'X';
+  let gameState = ['', '', '', '', '', '', '', '', ''];
+
+  function startGame() {
+    currentPlayer = 'X';
+    gameState = ['', '', '', '', '', '', '', '', ''];
+    cells.forEach(cell => { cell.textContent = ''; });
+    board.style.display = 'grid';
+    button.style.display = 'none';
+    message.style.display = 'none';
+  }
+
+  function cellClicked(event) {
+    const cell = event.target;
+    const index = cell.dataset.index;
+    if (gameState[index] === '' && !checkWinner()) {
+      cell.textContent = currentPlayer;
+      gameState[index] = currentPlayer;
+      if (checkWinner()) {
+        board.classList.add('winner');
+        message.textContent = currentPlayer + ' wins!';
+        message.style.display = 'block';
+        setTimeout(startGame, 1000);
+      } else if (!gameState.includes('')) {
+        board.classList.add('tie');
+        message.textContent = "It's a tie!";
+        message.style.display = 'block';
+        setTimeout(startGame, 1000);
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      }
+    }
+  }
+
+  function checkWinner() {
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6] // Diagonals
+    ];
+    for (let pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      if (gameState[a] !== '' && gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+        return true;
+      }
+    }
+    return false;
+  }
+</script>
+
+</body>
+</html>
